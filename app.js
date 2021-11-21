@@ -29,9 +29,25 @@ const promptUser = () => {
             }
         },
         {
+            type: 'confirm',
+            name: 'confirmAbout',
+            message: 'Would you like to add some information about yourself?',
+            default: true
+        },
+        {
             type: 'input',
             name: 'about',
-            message: 'Provide some information about yourself'
+            message: 'Provide some information about yourself',
+            //when the user makes a choice to enter information about themselves
+            when: ({confirmAbout}) => {
+                //if user selects yes in prompt before, show this Q
+                if (confirmAbout) {
+                    return true;
+                } else {
+                    //if user decides to not add info, skip this q
+                    return false;
+                }
+            }
         }
     ]);
 };
