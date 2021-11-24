@@ -1,6 +1,9 @@
 const inquirer = require('inquirer');
-const fs = require('fs');
 const generatePage = require('./src/page-template.js');
+//the below allows you to use the functions from the other page as generateSite.writeFile() or generateSite.copyFile()
+//const generateSite = require('./utils/generate-site.js');
+//to simplify and use the functions as is, use this notation
+const {writeFile, copyFile} = require('./utils/generate-site.js');
 
 const promptUser = () => {
     return inquirer.prompt ([
@@ -133,15 +136,47 @@ const promptProject = portfolioData => {
     });
 };
 
+//newer better way of writing the function call
 promptUser()
+    .then(promptProject)
+        .then(portfolioData => {
+            return generatePage(portfolioData);
+        })
+        .then(pageHTML => {
+            return writeFile(pageHTML);
+        })
+        .then(writeFileResponse => {
+            console.log(writeFileResponse);
+            return copyFile();
+        })
+        .then(copyFileResponse => {
+            console.log(copyFileResponse);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+//older way of doing it
+/*promptUser()
     .then(promptProject)
     .then(portfolioData => {
         const pageHTML = generatePage(portfolioData);
-        fs.writeFile('./index.html', pageHTML, err => {
-            if (err) throw new Error(err);
+        fs.writeFile('./dist/index.html', pageHTML, err => {
+            //if (err) throw new Error(err);
+            if (err) {
+                console.log(err);
+            }
+            console.log('Page created!');
+            fs.copyFile('./src/style.css', './dist/style.css', err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                } 
+                console.log('stylesheet copied successfully!');
+            })
         });
         console.log(portfolioData)
-    });
+    });*/
 
 
 /*
